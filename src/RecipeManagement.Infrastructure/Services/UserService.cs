@@ -62,5 +62,37 @@ namespace RecipeManagement.Infrastructure.Services
 
             _recipeManagementContext.SaveChanges();
         }
+
+        public User GetUserByEmailAddress(string emailAddress)
+        {
+            return _recipeManagementContext.Users.FirstOrDefault(user => user.EmailAddress == emailAddress);
+        }
+
+        public bool AuthenticateUser(string emailAddress, string password)
+        {
+            User user = GetUserByEmailAddress(emailAddress);
+
+            if (user == null) return false;
+
+            string passwordHash = _cryptographyService.CreatePasswordHash(password, user.PasswordSalt);
+
+            return passwordHash == user.Password;
+        }
+
+        public User GetUserById(Guid userId)
+        {
+            return _recipeManagementContext.Users.Find(userId);
+        }
+
+        public void ChangePassword(Guid userId, string password)
+        {
+            User user = _recipeManagementContext.Users.Find(userId);
+
+            user.PasswordSalt = _cryptographyService.CreateSalt();
+            user.Password = _cryptographyService.CreatePasswordHash(password, user.PasswordSalt);
+            user.DateUpdated = DateTime.Now;
+            
+            _recipeManagementContext.SaveChanges();
+        }
     }
 }

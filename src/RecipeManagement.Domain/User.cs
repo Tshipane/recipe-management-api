@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace RecipeManagement.Domain
 {
@@ -10,9 +11,9 @@ namespace RecipeManagement.Domain
         public string EmailAddress { get; set; }
         public string CellphoneNumber { get; set; }
         public string FullName => $"{Name} {Surname}";
-        public string PasswordSalt { get; set; }
-        public string Password { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
+        [JsonIgnore] public string PasswordSalt { get; set; }
+        [JsonIgnore] public string Password { get; set; }
+        [JsonIgnore] public DateTime DateCreated { get; set; }
+        [JsonIgnore] public DateTime DateUpdated { get; set; }
     }
 }

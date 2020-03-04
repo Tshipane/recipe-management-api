@@ -134,5 +134,108 @@ namespace RecipeManagement.Tests.Infrastructure.Services
             //Assert
             Assert.That(exception.Message, Is.EqualTo("User with specified email address already exists"));
         }
+
+        [TestCase("password", true)]
+        [TestCase("wrong password", false)]
+        public void AuthenticateUserTest_Given_Email_And_Password_Then_True_Should_Be_Returned_If_Password_Match(
+            string inputPassword, bool expectedResult)
+        {
+            //Arrange
+            const string passwordSalt = "passwordSalt";
+
+            var cryptographyService = new CryptographyService();
+            string password = cryptographyService.CreatePasswordHash("password", passwordSalt);
+
+            _cryptographyServiceMock.Setup(service => service.CreatePasswordHash("password", passwordSalt))
+                .Returns(password);
+
+            RecipeManagementContext.PrepareTestData(context =>
+            {
+                context.Users.Add(new User
+                {
+                    EmailAddress = "test@email.com",
+                    Password = password,
+                    PasswordSalt = passwordSalt
+                });
+            });
+
+            //Act
+            bool isAuthenticated = _userService.AuthenticateUser("test@email.com", inputPassword);
+
+            //Assert
+            Assert.That(isAuthenticated, Is.EqualTo(expectedResult));
+        }
+
+        [Test]
+        public void
+            AuthenticateUserTest_Given_Email_And_Password_And_User_Could_Not_Be_Found_With_Specified_Email_Then_False_Should_Be_Returned()
+        {
+            //Arrange
+            const string email = "user@email.com";
+
+            //Act
+            bool isAuthenticated = _userService.AuthenticateUser(email, "password");
+
+            //Assert
+            Assert.That(isAuthenticated, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void AuthenticateUserTest_Given_Email_And_Password_And_User_Is_Not_Active_Then_False_Should_Be_Returned()
+        {
+            //Arrange
+            const string email = "user@email.com";
+            RecipeManagementContext.PrepareTestData(context =>
+            {
+                context.Users.Add(new User
+                {
+                    EmailAddress = email,
+                    Password = "password",
+                    PasswordSalt = "passwordSalt"
+                });
+            });
+
+            //Act
+            bool isAuthenticated = _userService.AuthenticateUser(email, "password");
+
+            //Assert
+            Assert.That(isAuthenticated, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void
+            ChangePassword_Given_UserId_And_NewPassword_Then_Password_Should_Be_Changed_With_Newly_Generated_Salt()
+        {
+            //Arrange
+            var userId = Guid.NewGuid();
+            const string oldPassword = "OldPassword";
+            const string newPassword = "NewPassword";
+            const string oldSalt = "OldSalt";
+
+            RecipeManagementContext.PrepareTestData(context =>
+            {
+                context.Users.Add(new User
+                {
+                    UserId = userId,
+                    Password = oldPassword,
+                    PasswordSalt = oldSalt
+                });
+            });
+
+            _cryptographyServiceMock.Setup(service => service.CreateSalt()).Returns("Salt");
+            _cryptographyServiceMock.Setup(s => s.CreatePasswordHash(newPassword, "Salt")).Returns("PasswordHash");
+
+            //Act
+            _userService.ChangePassword(userId, newPassword);
+
+            //Assert
+            Assert.That(RecipeManagementContext.Users.First().Password, Is.EqualTo("PasswordHash"));
+            Assert.That(RecipeManagementContext.Users.First().PasswordSalt, Is.EqualTo("Salt"));
+            Assert.That(RecipeManagementContext.Users.First().DateUpdated, Is.EqualTo(DateTime.Now).Within(1).Minutes);
+
+            //Verify
+            _cryptographyServiceMock.Verify(v => v.CreatePasswordHash(newPassword, "Salt"));
+            RecipeManagementContext.VerifySave();
+        }
     }
 }
