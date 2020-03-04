@@ -5,7 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RecipeManagement.Domain\RecipeManagement.Domain.csproj" />
+      <ProjectReference Include="..\RecipeManagement.Infrastructure\RecipeManagement.Infrastructure.csproj" />
     </ItemGroup>
 
 
