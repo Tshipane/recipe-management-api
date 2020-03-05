@@ -49,7 +49,7 @@ namespace RecipeManagement.Infrastructure.Services
 
         public void UpdateUser(Guid userId, string name, string surname, string emailAddress, string cellphoneNumber)
         {
-            if (_recipeManagementContext.Users.Any(u => u.EmailAddress == emailAddress && u.UserId != userId))
+            if (_recipeManagementContext.Users.AsEnumerable().Any(u => u.EmailAddress == emailAddress && u.UserId != userId))
             {
                 throw new RecipeManagementException("User with specified email address already exists");
             }

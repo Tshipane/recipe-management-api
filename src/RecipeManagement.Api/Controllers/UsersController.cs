@@ -36,5 +36,11 @@ namespace RecipeManagement.Api.Controllers
             return await UpdateResource(() => _userService.UpdateUser(id, userModel.Name, userModel.Surname,
                 userModel.EmailAddress, userModel.CellphoneNumber));
         }
+        
+        [HttpGet("me")]
+        public async Task<IActionResult> LoggedInUser()
+        {
+            return await GetResource(() => _userService.GetUserById(UserId));
+        }
     }
 }
