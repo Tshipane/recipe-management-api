@@ -3,5 +3,6 @@
     public class AppSettings
     {
         public CosmosDbSettings CosmosDbSettings { get; set; }
+        public string EncryptionKey { get; set; }
     }
 }

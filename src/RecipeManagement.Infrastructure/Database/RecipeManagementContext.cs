@@ -9,6 +9,7 @@ namespace RecipeManagement.Infrastructure.Database
     public class RecipeManagementContext : DbContext
     {
         private readonly CosmosDbSettings _cosmosDbSettings;
+        private readonly AppSettings _appSettings;
 
         #region Consructors
 
@@ -20,6 +21,7 @@ namespace RecipeManagement.Infrastructure.Database
         public RecipeManagementContext(IAppSettingsAccessor appSettingsAccessor)
         {
             _cosmosDbSettings = appSettingsAccessor.AppSettings.CosmosDbSettings;
+            _appSettings = appSettingsAccessor.AppSettings;
         }
 
         #endregion
@@ -39,7 +41,7 @@ namespace RecipeManagement.Infrastructure.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration(_appSettings));
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
         }
 

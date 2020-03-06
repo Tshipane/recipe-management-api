@@ -67,7 +67,7 @@ namespace RecipeManagement.Infrastructure.Services
 
         public User GetUserByEmailAddress(string emailAddress)
         {
-            return _recipeManagementContext.Users.FirstOrDefault(user => user.EmailAddress == emailAddress);
+            return _recipeManagementContext.Users.AsEnumerable().FirstOrDefault(user => user.EmailAddress == emailAddress);
         }
 
         public bool AuthenticateUser(string emailAddress, string password)
