@@ -49,7 +49,8 @@ namespace RecipeManagement.Infrastructure.Services
 
         public void UpdateUser(Guid userId, string name, string surname, string emailAddress, string cellphoneNumber)
         {
-            if (_recipeManagementContext.Users.AsEnumerable().Any(u => u.EmailAddress == emailAddress && u.UserId != userId))
+            if (_recipeManagementContext.Users.AsEnumerable()
+                .Any(u => u.EmailAddress == emailAddress && u.UserId != userId))
             {
                 throw new RecipeManagementException("User with specified email address already exists");
             }
@@ -59,6 +60,7 @@ namespace RecipeManagement.Infrastructure.Services
             user.Surname = surname;
             user.CellphoneNumber = cellphoneNumber;
             user.EmailAddress = emailAddress;
+            user.DateUpdated = DateTime.Now;
 
             _recipeManagementContext.SaveChanges();
         }
@@ -91,7 +93,7 @@ namespace RecipeManagement.Infrastructure.Services
             user.PasswordSalt = _cryptographyService.CreateSalt();
             user.Password = _cryptographyService.CreatePasswordHash(password, user.PasswordSalt);
             user.DateUpdated = DateTime.Now;
-            
+
             _recipeManagementContext.SaveChanges();
         }
     }

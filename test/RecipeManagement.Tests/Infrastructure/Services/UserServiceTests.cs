@@ -43,6 +43,8 @@ namespace RecipeManagement.Tests.Infrastructure.Services
             Assert.That(RecipeManagementContext.Users.Count(), Is.EqualTo(1));
             Assert.That(user.PasswordSalt, Is.EqualTo("salt"));
             Assert.That(user.Password, Is.EqualTo("hashedPassword"));
+            Assert.That(user.DateCreated, Is.EqualTo(DateTime.Now).Within(1).Minutes);
+            Assert.That(user.DateUpdated, Is.EqualTo(DateTime.Now).Within(1).Minutes);
 
             _cryptographyServiceMock.Verify(service => service.CreateSalt(), Times.Once());
             _cryptographyServiceMock.Verify(service => service.CreatePasswordHash("password", "salt"), Times.Once());
@@ -81,7 +83,8 @@ namespace RecipeManagement.Tests.Infrastructure.Services
                 Name = "Old Name",
                 Surname = "Old Surname",
                 EmailAddress = "old-email@email.com",
-                CellphoneNumber = "0720000000"
+                CellphoneNumber = "0720000000",
+                DateCreated = DateTime.Now.AddDays(-1)
             };
 
             RecipeManagementContext.PrepareTestData(context => { context.Users.Add(user); });
@@ -96,6 +99,8 @@ namespace RecipeManagement.Tests.Infrastructure.Services
             Assert.That(user.CellphoneNumber, Is.EqualTo("0721234567"));
             Assert.That(user.EmailAddress, Is.EqualTo("name.surname@email.com"));
             Assert.That(RecipeManagementContext.Users.Count(), Is.EqualTo(1));
+            Assert.That(user.DateCreated, Is.EqualTo(DateTime.Now.AddDays(-1)).Within(1).Minutes);
+            Assert.That(user.DateUpdated, Is.EqualTo(DateTime.Now).Within(1).Minutes);
 
             RecipeManagementContext.VerifySave();
         }

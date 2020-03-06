@@ -100,6 +100,7 @@ namespace RecipeManagement.Api
             builder.RegisterType<UserService>().AsImplementedInterfaces();
             builder.RegisterType<CryptographyService>().AsImplementedInterfaces();
             builder.RegisterType<JwtFactory>().AsImplementedInterfaces();
+            builder.RegisterType<RecipeService>().AsImplementedInterfaces();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

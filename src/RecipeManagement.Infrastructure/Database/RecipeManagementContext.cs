@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeManagement.Domain;
+using RecipeManagement.Domain.Recipes;
 using RecipeManagement.Infrastructure.Configurations;
 using RecipeManagement.Infrastructure.Database.Configurations;
 
@@ -39,6 +40,7 @@ namespace RecipeManagement.Infrastructure.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new RecipeConfiguration());
         }
 
         #endregion
@@ -46,6 +48,7 @@ namespace RecipeManagement.Infrastructure.Database
         #region Entities
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
 
         #endregion
     }
