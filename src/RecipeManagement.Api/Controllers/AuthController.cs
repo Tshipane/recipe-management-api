@@ -41,7 +41,7 @@ namespace RecipeManagement.Api.Controllers
                 return BadRequest(new BadRequestError(ModelState.GetErrors().FirstOrDefault()));
             }
 
-            var (claimsIdentity, user) = await GetClaimsIdentity(loginModel);
+            (ClaimsIdentity claimsIdentity, User user) = await GetClaimsIdentity(loginModel);
             if (claimsIdentity == null)
             {
                 return BadRequest(new ModelError("Login failed. Invalid email address or password."));
